@@ -78,16 +78,13 @@ class Graph:
                 for neighbor in self.get_neighbors(last_vertex):
                     stack.push(neighbor)
 
-    def dft_recursive(self, starting_vertex, visited=None):
+    def dft_recursive(self, starting_vertex, visited=set()):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        if visited is None:
-            visited = set()
-
         current_vertex = starting_vertex
 
         if current_vertex not in visited:
@@ -134,9 +131,29 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        stack = Stack()
+        stack.push([starting_vertex])
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
+        visited = set()
+
+        while stack.size() > 0:
+            path = stack.pop()
+            last_vertex = path[-1]
+
+            if last_vertex not in visited:
+                visited.add(last_vertex)
+
+                if last_vertex == destination_vertex:
+                    return path
+
+                for neighbor in self.get_neighbors(last_vertex):
+                    new_path = list(path)
+                    new_path.append(neighbor)
+
+                    stack.push(new_path)
+        return None
+
+    def dfs_recursive(self, starting_vertex, destination_vertex, path=[]):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -144,7 +161,24 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        path = path + [starting_vertex]
+
+        if starting_vertex == destination_vertex:
+            return path
+
+        if starting_vertex not in self.vertices:
+            return None
+        shortest_path = None
+
+        for neighbor in self.get_neighbors(starting_vertex):
+            if neighbor not in path:
+                new_path = self.dfs_recursive(
+                    neighbor, destination_vertex, path)
+                if new_path:
+                    if not shortest_path or len(new_path) < len(shortest_path):
+                        shortest_path = new_path
+
+        return shortest_path
 
 
 if __name__ == '__main__':
